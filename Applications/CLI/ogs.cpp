@@ -150,8 +150,9 @@ int main(int argc, char* argv[])
 #endif
 
 #ifdef OGS_USE_PDAF
-    int a = 5;
-    c_init_parallel_pdaf(&a, &a);
+    auto ens_no = 9;
+    auto pdaf_screen = 3;
+    c_init_parallel_pdaf(&ens_no, &pdaf_screen);
 #endif
 
     BaseLib::RunTime run_time;
@@ -240,6 +241,10 @@ int main(int argc, char* argv[])
 
             BaseLib::ConfigTree::assertNoSwallowedErrors();
 
+#ifdef OGS_USE_PDAF
+            c_init_pdaf(&ens_no);
+#endif
+
             INFO("Solve processes.");
 
             auto& time_loop = project.getTimeLoop();
@@ -273,6 +278,10 @@ int main(int argc, char* argv[])
         auto const time_str = BaseLib::formatDate(end_time);
         INFO("OGS terminated on %s.", time_str.c_str());
     }
+
+#ifdef OGS_USE_PDAF
+    c_finalize_pdaf();
+#endif
 
     if (ogs_status == EXIT_FAILURE)
     {
